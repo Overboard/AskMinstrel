@@ -215,8 +215,12 @@ class Provider():
             shutil.rmtree(CACHE, ignore_errors=True)
             factory = tekore.Spotify
 
-        self.token = self._token_load()
-        self._token_dump(self.token)
+        try:
+            self.token = self._token_load()
+            self._token_dump(self.token)
+        except tekore.BadRequest as err:
+            self.token = None
+
         self.spotify = factory(token=self.token,
             sender=tekore.CachingSender(max_size=256, 
                 sender=tekore.PersistentSender()))  # chained senders
